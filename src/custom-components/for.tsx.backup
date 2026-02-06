@@ -1,0 +1,481 @@
+import { BaseComponent } from '../components/base-component.js';
+import { Component } from '../components/decorators/component.js';
+import { Prop } from '../components/decorators/prop.js';
+import { Computed } from '../reactivity/decorators/computed.js';
+import { Effect } from '../reactivity/decorators/effect.js';
+import { ReactiveArray } from '../reactivity/signals/reactive-array.js';
+import { effect } from '../reactivity/signals/effect.js';
+
+/**
+ * Interfaz para el resultado de una funcion de renderizado
+ */
+type RenderResult = Node | string | number | boolean | null | undefined;
+
+/**
+ * Componente For - Renderiza una lista reactiva con actualizaciones granulares
+ *
+ * Version declarativa que usa las primitivas reactivas del framework
+ */
+@Component({
+  styles: undefined
+})
+export class For<T = any> extends BaseComponent {
+  /**
+   * Array reactivo a iterar
+   * Puede ser un ReactiveArray, un Proxy de ReactiveArray, o un array plano
+   */
+  @Prop
+  each!: any;
+
+  /**
+   * Funcion que retorna la key unica de cada elemento (opcional)
+   */
+  @Prop
+  keyFn?: string | ((item: T, index: number) => string | number);
+
+  /**
+   * Funcion de renderizado para cada elemento (sincrona)
+   * Renombrado a 'render' para evitar conflicto con HTMLElement.children
+   */
+  @Prop
+  render!: (item: T, index: number) => RenderResult;
+
+  // Estado interno
+  private container: HTMLElement | null = null;
+  private itemEffects: Map<string | number, {
+    effect: { dispose: () => void },
+    node: Node | null,
+    marker: Comment
+  }> = new Map();
+
+  /**
+   * Array reactivo - simplemente retorna el prop 'each'
+   * El Proxy es transparente y delega correctamente al ReactiveArray
+   */
+  @Computed
+  get reactiveArray(): ReactiveArray<T> {
+    return this.each;
+  }
+
+  /**
+   * Array de keys en el orden actual (reactivo)
+   */
+  @Computed
+  get orderedKeys(): (string | number)[] {
+    const array = this.reactiveArray;
+    console.log({array})
+    const keys: (string | number)[] = [];
+
+    for (let i = 0; i < array.length; i++) {
+      const item = array.at(i);
+      if (item !== undefined) {
+        const key = this.getKey(item, i);
+        keys.push(key);
+      }
+    }
+
+    return keys;
+  }
+
+  /**
+   * Mapa de key -> indice actual (reactivo)
+   */
+  @Computed
+  get keyToIndex(): Map<string | number, number> {
+    const map = new Map<string | number, number>();
+    const keys = this.orderedKeys;
+
+    keys.forEach((key, index) => {
+      map.set(key, index);
+    });
+
+    return map;
+  }
+
+  /**
+   * Mapa de indice -> key actual (reactivo)
+   */
+  @Computed
+  get indexToKey(): Map<number, string | number> {
+    const map = new Map<number, string | number>();
+    const keys = this.orderedKeys;
+
+    keys.forEach((key, index) => {
+      map.set(index, key);
+    });
+
+    return map;
+  }
+
+  /**
+   * Keys que ya no existen (para cleanup)
+   */
+  @Computed
+  get removedKeys(): (string | number)[] {
+    const currentKeys = new Set(this.orderedKeys);
+    const removed: (string | number)[] = [];
+
+    for (const key of this.itemEffects.keys()) {
+      if (!currentKeys.has(key)) {
+        removed.push(key);
+      }
+    }
+
+    return removed;
+  }
+
+  /**
+   * Keys nuevas que necesitan efectos
+   */
+  @Computed
+  get addedKeys(): { key: string | number, index: number }[] {
+    const added: { key: string | number, index: number }[] = [];
+    const currentKeys = new Set(this.itemEffects.keys());
+
+    this.orderedKeys.forEach((key, index) => {
+      if (!currentKeys.has(key)) {
+        added.push({ key, index });
+      }
+    });
+
+    return added;
+  }
+
+  /**
+   * Keys que cambiaron de posicion
+   */
+  @Computed
+  get movedKeys(): { key: string | number, oldIndex: number, newIndex: number }[] {
+    const moved: { key: string | number, oldIndex: number, newIndex: number }[] = [];
+
+    for (const [key, effectInfo] of this.itemEffects.entries()) {
+      const newIndex = this.keyToIndex.get(key);
+      const marker = effectInfo.marker;
+
+      if (newIndex !== undefined && marker && this.container) {
+        // Encontrar la posicion actual en el DOM
+        let currentIndex = -1;
+        for (let i = 0; i < this.container.childNodes.length; i++) {
+          if (this.container.childNodes[i] === marker) {
+            currentIndex = Math.floor(i / 2); // Cada marker tiene un nodo despues
+            break;
+          }
+        }
+
+        if (currentIndex !== -1 && currentIndex !== newIndex) {
+          moved.push({ key, oldIndex: currentIndex, newIndex });
+        }
+      }
+    }
+
+    return moved;
+  }
+
+  /**
+   * Obtiene la key unica para un elemento
+   */
+  private getKey(item: T, index: number): string | number {
+    if (!this.keyFn) {
+      return index;
+    }
+
+    if (typeof this.keyFn === 'string') {
+      return (item as any)[this.keyFn];
+    }
+
+    return this.keyFn(item, index);
+  }
+
+  /**
+   * Renderiza el contenido del componente
+   */
+  view() {
+    console.log(this.each)
+    return (
+      <div class="for-container" style="display: contents;" ref={(el: HTMLElement) => this.container = el}>
+        {/* Los elementos se insertaran aqui dinamicamente */}
+      </div>
+    );
+  }
+
+  /**
+   * Effect para manejar keys eliminadas
+   */
+  @Effect
+  handleRemovedKeys() {
+    const removed = this.removedKeys;
+
+    removed.forEach(key => {
+      this.disposeItemEffect(key);
+    });
+  }
+
+  /**
+   * Effect para manejar keys agregadas
+   */
+  @Effect
+  handleAddedKeys() {
+    const added = this.addedKeys;
+
+    added.forEach(({ key, index }) => {
+      this.createItemEffect(key, index);
+    });
+  }
+
+  /**
+   * Effect para manejar keys movidas
+   */
+  @Effect
+  handleMovedKeys() {
+    const moved = this.movedKeys;
+
+    if (moved.length > 0) {
+      // Reordenar todos los marcadores
+      this.reorderMarkers();
+    }
+  }
+
+  /**
+   * Crea un efecto reactivo para un item especifico
+   */
+  private createItemEffect(key: string | number, index: number): void {
+    // Crear marcador de posicion
+    const marker = document.createComment(`for-item-${key}`);
+
+    // Insertar marcador en la posicion correcta
+    this.insertMarkerAtPosition(marker, index);
+
+    // Crear effect para este item especifico
+    const itemEffect = this.createItemReactiveEffect(key, index, marker);
+
+    // Guardar referencia
+    this.itemEffects.set(key, {
+      effect: itemEffect,
+      node: null,
+      marker
+    });
+  }
+
+  /**
+   * Crea el efecto reactivo para renderizar un item
+   */
+  private createItemReactiveEffect(key: string | number, initialIndex: number, marker: Comment): { dispose: () => void } {
+    // Usamos el effect del framework
+    const itemEffect = effect((onCleanup) => {
+      // Obtener el indice actual de esta key
+      const currentIndex = this.keyToIndex.get(key);
+      if (currentIndex === undefined) return;
+
+      // Suscribirse al indice especifico
+      const array = this.reactiveArray;
+      const item = array.at(currentIndex);
+
+      // Renderizar el item si existe
+      if (item !== undefined) {
+        this.renderItem(key, currentIndex, item, marker);
+      }
+
+      // Limpieza
+      onCleanup(() => {
+        const effectInfo = this.itemEffects.get(key);
+        if (effectInfo && effectInfo.node && this.container?.contains(effectInfo.node)) {
+          this.container.removeChild(effectInfo.node);
+        }
+      });
+    });
+
+    return itemEffect;
+  }
+
+  /**
+   * Inserta un marcador en la posicion correcta del DOM
+   */
+  private insertMarkerAtPosition(marker: Comment, targetIndex: number): void {
+    if (!this.container) return;
+
+    // Encontrar el marcador anterior al targetIndex
+    let previousMarker: Comment | null = null;
+
+    // Buscar marcador con indice targetIndex-1
+    for (const [key, effectInfo] of this.itemEffects.entries()) {
+      const keyIndex = this.keyToIndex.get(key);
+      if (keyIndex === targetIndex - 1) {
+        previousMarker = effectInfo.marker;
+        break;
+      }
+    }
+
+    if (previousMarker) {
+      // Insertar despues del marcador anterior y su nodo
+      const effectInfo = Array.from(this.itemEffects.values()).find(e => e.marker === previousMarker);
+      if (effectInfo?.node && effectInfo.node.parentNode) {
+        effectInfo.node.parentNode.insertBefore(marker, effectInfo.node.nextSibling);
+      } else if (previousMarker.parentNode) {
+        previousMarker.parentNode.insertBefore(marker, previousMarker.nextSibling);
+      }
+    } else if (targetIndex === 0) {
+      // Insertar al inicio
+      this.container.prepend(marker);
+    } else {
+      // Insertar al final (fallback)
+      this.container.appendChild(marker);
+    }
+  }
+
+  /**
+   * Renderiza un item individual
+   */
+  private renderItem(key: string | number, index: number, item: T, marker: Comment): void {
+    try {
+      // Ejecutar funcion de renderizado
+      const renderResult = this.render(item, index);
+
+      // Convertir a nodo DOM
+      const newNode = this.toNode(renderResult);
+
+      // Obtener informacion del efecto actual
+      const effectInfo = this.itemEffects.get(key);
+      if (!effectInfo) return;
+
+      // Reemplazar nodo antiguo si existe
+      const oldNode = effectInfo.node;
+      if (oldNode && oldNode !== newNode && marker.parentNode) {
+        marker.parentNode.replaceChild(newNode, oldNode);
+      } else if (!oldNode && marker.parentNode) {
+        // Insertar nuevo nodo despues del marcador
+        marker.parentNode.insertBefore(newNode, marker.nextSibling);
+      }
+
+      // Actualizar referencia
+      effectInfo.node = newNode;
+    } catch (error) {
+      console.error(`Error rendering item with key ${key}:`, error);
+      // Crear nodo de error
+      this.handleRenderError(key, error, marker);
+    }
+  }
+
+  /**
+   * Maneja errores en el renderizado
+   */
+  private handleRenderError(key: string | number, error: any, marker: Comment): void {
+    const errorNode = document.createElement('div');
+    errorNode.className = 'for-error';
+    errorNode.textContent = `Error: ${error}`;
+
+    const effectInfo = this.itemEffects.get(key);
+    if (effectInfo) {
+      const oldNode = effectInfo.node;
+      if (oldNode && marker.parentNode) {
+        marker.parentNode.replaceChild(errorNode, oldNode);
+      } else if (marker.parentNode) {
+        marker.parentNode.insertBefore(errorNode, marker.nextSibling);
+      }
+      effectInfo.node = errorNode;
+    }
+  }
+
+  /**
+   * Convierte un resultado de renderizado a Node
+   */
+  private toNode(result: RenderResult): Node {
+    if (result instanceof Node) {
+      return result;
+    }
+
+    if (result === null || result === undefined || result === false) {
+      return document.createComment('empty');
+    }
+
+    if (result === true) {
+      return document.createComment('true');
+    }
+
+    return document.createTextNode(String(result));
+  }
+
+  /**
+   * Reordena todos los marcadores en el DOM segun el orden actual
+   */
+  private reorderMarkers(): void {
+    if (!this.container) return;
+
+    // Crear un array de [key, effectInfo] ordenado por indice
+    const sortedEffects = Array.from(this.itemEffects.entries())
+      .sort(([keyA], [keyB]) => {
+        const indexA = this.keyToIndex.get(keyA) ?? Infinity;
+        const indexB = this.keyToIndex.get(keyB) ?? Infinity;
+        return indexA - indexB;
+      });
+
+    // Reordenar marcadores en el DOM
+    sortedEffects.forEach(([_key, effectInfo]) => {
+      const marker = effectInfo.marker;
+
+      // Remover el marcador actual
+      if (this.container!.contains(marker)) {
+        this.container!.removeChild(marker);
+      }
+
+      // Anadirlo al final (se iran anadiendo en orden)
+      this.container!.appendChild(marker);
+
+      // Mover el nodo asociado si existe
+      if (effectInfo.node) {
+        if (this.container!.contains(effectInfo.node)) {
+          this.container!.removeChild(effectInfo.node);
+        }
+        // Insertar despues del marcador
+        if (marker.parentNode) {
+          marker.parentNode.insertBefore(effectInfo.node, marker.nextSibling);
+        }
+      }
+    });
+  }
+
+  /**
+   * Elimina un efecto de item especifico
+   */
+  private disposeItemEffect(key: string | number): void {
+    const effectInfo = this.itemEffects.get(key);
+    if (!effectInfo) return;
+
+    // Limpiar efecto
+    effectInfo.effect.dispose();
+
+    // Remover nodo del DOM si existe
+    if (effectInfo.node && this.container?.contains(effectInfo.node)) {
+      this.container.removeChild(effectInfo.node);
+    }
+
+    // Remover marcador
+    if (effectInfo.marker && this.container?.contains(effectInfo.marker)) {
+      this.container.removeChild(effectInfo.marker);
+    }
+
+    // Remover de la coleccion
+    this.itemEffects.delete(key);
+  }
+
+  /**
+   * Cuando el componente se desconecta del DOM
+   */
+  onDisconnected() {
+    // Limpiar todos los efectos
+    for (const [key] of this.itemEffects) {
+      this.disposeItemEffect(key);
+    }
+    this.itemEffects.clear();
+    this.container = null;
+  }
+
+  /**
+   * Metodo para actualizacion manual (util en tests)
+   */
+  forceUpdate(): void {
+    // Forzar recomputacion de las dependencias
+    this.handleRemovedKeys();
+    this.handleAddedKeys();
+    this.handleMovedKeys();
+  }
+}

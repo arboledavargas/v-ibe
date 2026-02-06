@@ -1,0 +1,187 @@
+================================================================================
+BITÁCORA DE INVESTIGACIÓN: Loop Infinito en RouteView
+================================================================================
+Fecha inicio: 2025-01-26
+Estado: EN INVESTIGACIÓN
+
+================================================================================
+PROBLEMA REPORTADO
+================================================================================
+- RouteView L0 carga App correctamente
+- App contiene RouteView L1
+- Se genera loop infinito donde window.alert(this.navigationLevel) muestra "1" infinitamente
+
+================================================================================
+HIPÓTESIS INICIALES
+================================================================================
+
+H1: syncRouteCandidates causa el loop
+    Estado: DESCARTADA
+    Evidencia: Alert en syncRouteCandidates solo ejecuta 2 veces, no infinito
+
+H2: ReactiveArray._notify causa el loop
+    Estado: DESCARTADA
+    Evidencia: Alert en _notify no aparece en el loop
+
+H3: @Ctx (sistema de contexto) causa el loop
+    Estado: DESCARTADA
+    Evidencia: Reemplazar @Ctx con getter hardcoded no detiene el loop
+
+H4: El effect de renderReactiveChild se re-ejecuta infinitamente
+    Estado: PARCIALMENTE CONFIRMADA
+    Evidencia: Logs muestran effect [51q37l] ejecutando #1, #2, #3...
+
+H5: this.jsx() siempre crea nuevas instancias
+    Estado: CONFIRMADA
+    Evidencia: "@Computed CREANDO NUEVO computed" aparece repetidamente
+
+================================================================================
+HALLAZGOS CLAVE
+================================================================================
+
+[2025-01-26] Test unitarios con primitivas reactivas NO reproducen el loop
+- Signal, Resource, ReactiveArray, effect funcionan correctamente aislados
+- El loop NO está en las primitivas reactivas puras
+
+[2025-01-26] Asignar routeCandidates[i] = [...] SIEMPRE notifica
+- Incluso si el contenido es idéntico, el ReactiveArray notifica
+- Esto causa re-ejecución innecesaria pero NO explica loop INFINITO
+
+[2025-01-26] El problema está en la INTEGRACIÓN
+- Componentes + DOM + JSX runtime + Effects combinados
+- Tests unitarios pasan, pero el escenario real falla
+- NECESARIO: Test de integración con DOM real
+
+================================================================================
+HALLAZGO CRÍTICO [2025-01-26] - LOOP REPRODUCIDO EN TESTS
+================================================================================
+
+¡ÉXITO! El test loop-detector.test.ts REPRODUCE el loop infinito.
+
+EVIDENCIA:
+- Test "debe detectar si RouteView L0 con JSX real causa loop infinito" FALLA
+- Error: "Loop detected during rendering"
+- El effect [9y5q0a] se ejecuta #1, #2, #3... infinitamente
+- Cada ejecución crea NUEVA instancia de TestAppComponent
+
+PATRÓN OBSERVADO EN LOGS:
+  renderReactiveChild EFFECT [9y5q0a] #2 - parent: #document-fragment
+  renderReactiveChild value [9y5q0a]: TestAppComponent [HTMLElement]
+  ...
+  renderReactiveChild EFFECT [9y5q0a] #3 - parent: #document-fragment
+  (crea OTRO TestAppComponent)
+
+TESTS AISLADOS PASAN:
+- "RouteView L0 solo (sin hijo) no debe causar loop" ✅
+- "RouteView L1 solo (sin padre) no debe causar loop" ✅
+
+CONCLUSIÓN:
+El loop SOLO ocurre cuando hay RouteView anidados (L0 → App → L1).
+El problema es que:
+1. Effect evalúa: () => this.componentClass.state === 'ready' && this.jsx(...)
+2. this.jsx() SIEMPRE crea nueva instancia
+3. Nueva instancia tiene nuevos effects/resources
+4. Algo en esa cadena invalida el effect padre
+5. GOTO 1 → LOOP INFINITO
+
+================================================================================
+PRÓXIMOS PASOS
+================================================================================
+1. ✅ Crear test con jsdom que simule el escenario completo
+2. ✅ Instrumentar métodos clave para detectar patrones
+3. Identificar QUÉ invalida el effect padre cuando se crea el componente hijo
+4. Determinar si el problema está en:
+   a) createAndRenderComponent - siempre crea instancia nueva
+   b) renderReactiveChild - no detecta que el componente ya existe
+   c) Resource - algo en su inicialización invalida effects externos
+
+================================================================================
+MÉTODOS A INSTRUMENTAR
+================================================================================
+- Router: syncRouteCandidates, navigate
+- RouteView: view(), levelCandidates (getter), Resource callback
+- BaseComponent: initializeForJSX, jsx, createAndRenderComponent
+- child-renderer: renderReactiveChild (el effect interno)
+- Resource: constructor effect
+
+================================================================================
+NOTAS TÉCNICAS
+================================================================================
+- Framework usa fine-grained reactivity (como Solid)
+- view() solo ejecuta una vez, updates son granulares via effects
+- El problema parece estar en el ciclo:
+  effect → state change → re-run → create component → new effects → ???
+
+================================================================================
+ANÁLISIS DE LA CAUSA RAÍZ [2025-01-26]
+================================================================================
+
+CADENA DE EVENTOS QUE CAUSA EL LOOP INFINITO:
+
+1. RouteView L0 se inicializa
+   └── Resource L0 se crea (resource.ts:25 - effect interno)
+   └── view() se ejecuta una vez
+       └── Retorna Fragment con children reactivos:
+           [() => state==='pending' && ..., () => state==='ready' && this.jsx(...)]
+
+2. renderChild procesa los children reactivos
+   └── Para cada función, renderReactiveChild crea un EFFECT (child-renderer.ts:86)
+   └── Effect [9y5q0a] evalúa: () => state==='ready' && this.jsx(LoadedComponent)
+
+3. Resource L0 resuelve → state cambia a 'ready'
+   └── _stateSignal.set('ready') (resource.ts:53)
+   └── Esto invalida todos los effects que leyeron 'state'
+   └── Effect [9y5q0a] se re-ejecuta
+
+4. Effect [9y5q0a] se re-ejecuta (#2)
+   └── Evalúa: this.componentClass.state === 'ready' → TRUE
+   └── Ejecuta: this.jsx(TestAppComponent, {})
+   └── this.jsx() llama createAndRenderComponent() (base-component.ts:375)
+       └── SIEMPRE crea nueva instancia: instance = new ComponentClass() (línea 464)
+       └── Inicializa el componente: instance.initializeForJSX() (línea 500)
+           └── initializeResources() crea Resource del NUEVO componente
+           └── El nuevo Resource tiene su propio effect interno
+       └── Renderiza view(): const view = (instance as any).view() (línea 503)
+           └── El view del hijo (App) contiene RouteView L1
+           └── RouteView L1 también tiene Resource y effects...
+
+5. **PUNTO CRÍTICO**: Al crear el nuevo componente (TestAppComponent):
+   - Su inicialización ocurre DENTRO del effect [9y5q0a]
+   - El nuevo componente crea sus propios Resources/effects
+   - Estos nuevos Resources leen signals (state, candidates)
+   - Al leerlas, el EFFECT PADRE [9y5q0a] las trackea como dependencias
+
+6. **LOOP**: Cuando el Resource del hijo cambia state:
+   - _stateSignal.set('ready') notifica a TODOS los effects que la leyeron
+   - Esto incluye el effect [9y5q0a] del PADRE
+   - Effect [9y5q0a] se re-ejecuta (#3)
+   - this.jsx() crea OTRA nueva instancia
+   - GOTO 4 → INFINITO
+
+================================================================================
+SOLUCIÓN PROPUESTA
+================================================================================
+
+El problema es que createAndRenderComponent() se ejecuta DENTRO de un effect,
+y la inicialización del componente hijo crea dependencias que invalidan al padre.
+
+OPCIONES:
+
+A) Usar reactiveContext.untrack() al crear componentes
+   - Ya existe en createAndRenderComponent (línea 462-518)
+   - PERO el untrack no cubre la lectura de this.componentClass.state
+
+B) Cache de instancias en renderReactiveChild
+   - Si el value es un Node que ya existe, NO reemplazarlo
+   - PROBLEMA: this.jsx() siempre crea NUEVA instancia, nunca retorna la misma
+
+C) Memoización en this.jsx() para componentes
+   - Comparar ComponentClass + props
+   - Si son iguales, retornar instancia cacheada
+   - SIMILAR a cómo React maneja keys y reconciliation
+
+D) Separar evaluación de condición vs. creación de componente
+   - El effect solo evalúa state === 'ready'
+   - La creación del componente se hace fuera del tracking
+
+================================================================================

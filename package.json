@@ -1,0 +1,83 @@
+{
+  "name": "signalsframework",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./jsx-runtime": {
+      "types": "./dist/jsx-runtime.d.ts",
+      "import": "./dist/jsx-runtime.js",
+      "default": "./dist/jsx-runtime.js"
+    },
+    "./jsx-dev-runtime": {
+      "types": "./dist/jsx-dev-runtime.d.ts",
+      "import": "./dist/jsx-dev-runtime.js",
+      "default": "./dist/jsx-dev-runtime.js"
+    },
+    "./vite-plugins": {
+      "types": "./dist/vite-plugins/index.d.ts",
+      "import": "./dist/vite-plugins/index.js",
+      "default": "./dist/vite-plugins/index.js"
+    },
+    "./app-entry": {
+      "types": "./dist/app-entry.d.ts",
+      "import": "./dist/app-entry.js",
+      "default": "./dist/app-entry.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --config vite.config.dev.ts",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist",
+    "test:parser": "tsx src/router/static-analysis/test.ts",
+    "test:scanner": "tsx src/router/static-analysis/test-scanner.ts",
+    "test:class-decorator": "tsx src/router/static-analysis/test-class-decorator.ts",
+    "test:vite-plugin": "tsx src/vite-plugins/router/test-plugin.ts",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "framework",
+    "signals",
+    "reactive",
+    "web-components",
+    "jsx",
+    "typescript"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com:Signals-Framework/framework.git"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0",
+    "vite": "^7.1.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@vitest/ui": "^4.0.17",
+    "happy-dom": "^20.3.1",
+    "jsdom": "^27.4.0",
+    "postcss": "^8.5.6",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^4.0.17"
+  }
+}

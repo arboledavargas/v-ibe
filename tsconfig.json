@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "useDefineForClassFields": false,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "signalsframework",
+    "types": ["vite/client"],
+    "paths": {
+      // Paths needed for type-checking the framework while it references itself
+      "signalsframework": ["./src/index.ts"],
+      "signalsframework/jsx-runtime": ["./src/jsx/jsx-runtime.ts"],
+      "signalsframework/jsx-dev-runtime": ["./src/jsx/jsx-dev-runtime.ts"],
+      "signalsframework/vite-plugins": ["./src/vite-plugins/index.ts"]
+    }
+  },
+  "include": ["src/**/*", "app/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
