@@ -1,0 +1,18 @@
+<header>
+  <nav class="path-nav">
+    <ol>
+      <li{{ if .IsHome }} class="current-sep"{{ end }}>/</li>
+      <li{{ if .IsHome }} class="current"{{ end }}><a href="{{ "/" | relURL }}">{{ .Site.Title }}</a></li>
+      {{ range .Ancestors.Reverse }}
+        {{ if not .IsHome }}
+        <li>/</li>
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+        {{ end }}
+      {{ end }}
+      {{ if not .IsHome }}
+      <li class="current-sep">/</li>
+      <li class="current"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{ end }}
+    </ol>
+  </nav>
+</header>

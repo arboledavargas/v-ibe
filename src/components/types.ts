@@ -1,5 +1,6 @@
 import { BaseComponent } from "./base-component"; // Está bien importar clases para usarlas en tipos
 import { BaseStyleSheet } from "../styles/base-style-sheet";
+import type { ScopedContainer } from "../DI/scoped-container";
 
 // Tipo para un constructor de clase
 export type Constructor<T = {}> = new (...args: any[]) => T;
@@ -25,6 +26,8 @@ export type ComponentMetadata = {
   // Si es false, el componente no usa Shadow DOM
   useShadowDOM?: boolean;
 
+  // Servicios que este componente provee a sus hijos
+  services?: Constructor[];
 };
 
 // Nodo que representa una "instancia" viva en el árbol
@@ -35,4 +38,5 @@ export interface INode {
   parent?: INode;
   children: INode[];
   contextStore?: object;
+  container?: ScopedContainer;
 }

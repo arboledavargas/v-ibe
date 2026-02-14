@@ -1,0 +1,21 @@
+baseURL: 'https://signalsframework.dev/'
+languageCode: 'en'
+title: 'Signals Framework'
+theme: 'signals-docs'
+
+markup:
+  highlight:
+    noClasses: false
+
+params:
+  author: 'Julian Vargas'
+  description: 'Documentation for Signals Framework'
+
+menu:
+  main:
+    - name: Docs
+      url: /docs/
+      weight: 1
+    - name: API Reference
+      url: /api/
+      weight: 2

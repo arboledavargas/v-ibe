@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Styles — Signals Framework</title>
+  <meta name="description" content="Documentation for Signals Framework">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+  <nav class="path-nav">
+    <ol>
+      <li>/</li>
+      <li><a href="/">Signals Framework</a></li>
+      
+        
+      
+        
+        <li>/</li>
+        <li><a href="/docs/">Documentation</a></li>
+        
+      
+        
+        <li>/</li>
+        <li><a href="/docs/features/">Features</a></li>
+        
+      
+      
+      <li class="current-sep">/</li>
+      <li class="current"><a href="/docs/features/styles/">Styles</a></li>
+      
+    </ol>
+  </nav>
+</header>
+
+  <main>
+    <article class="content">
+      
+<h1>Styles</h1>
+<p>Signals Framework provides reactive CSS-in-JS through stylesheet classes. Styles are scoped to components via Shadow DOM and can react to state changes.</p>
+<h2 id="defining-a-stylesheet">Defining a stylesheet</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">BaseStyleSheet</span><span class="p">,</span> <span class="nx">Rule</span><span class="p">,</span> <span class="nx">Keyframes</span> <span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;signalsframework&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">class</span> <span class="nx">ButtonStyles</span> <span class="kr">extends</span> <span class="nx">BaseStyleSheet</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">@Rule</span><span class="p">(</span><span class="s1">&#39;:host&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">get</span> <span class="nx">host() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;inline-block&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">@Rule</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">get</span> <span class="nx">button() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">padding</span><span class="o">:</span> <span class="s1">&#39;8px 16px&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">border</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">borderRadius</span><span class="o">:</span> <span class="s1">&#39;4px&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">&#39;#7c6ef0&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">color</span><span class="o">:</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">cursor</span><span class="o">:</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">@Rule</span><span class="p">(</span><span class="s1">&#39;button:hover&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">get</span> <span class="nx">buttonHover() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">&#39;#9182f5&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="attaching-styles-to-components">Attaching styles to components</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kd">@Component</span><span class="p">({</span> <span class="nx">styles</span><span class="o">:</span> <span class="p">[</span><span class="nx">ButtonStyles</span><span class="p">]</span> <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="kr">class</span> <span class="nx">MyButton</span> <span class="kr">extends</span> <span class="nx">BaseComponent</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">view() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;&lt;</span><span class="nt">slot</span> <span class="p">/&gt;&lt;/</span><span class="nt">button</span><span class="p">&gt;;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="reactive-styles">Reactive styles</h2>
+<p>Since getters are used, styles can depend on reactive state:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kr">class</span> <span class="nx">ThemeStyles</span> <span class="kr">extends</span> <span class="nx">BaseStyleSheet</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">@Host</span> <span class="nx">host</span><span class="o">!:</span> <span class="nx">BaseComponent</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">@Rule</span><span class="p">(</span><span class="s1">&#39;:host&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">get</span> <span class="nx">hostStyle() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">backgroundColor</span>: <span class="kt">this.host.darkMode</span> <span class="o">?</span> <span class="s1">&#39;#1a1a2e&#39;</span> <span class="o">:</span> <span class="s1">&#39;#ffffff&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">color</span>: <span class="kt">this.host.darkMode</span> <span class="o">?</span> <span class="s1">&#39;#e2e2e6&#39;</span> <span class="o">:</span> <span class="s1">&#39;#1a1a2e&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">transition</span><span class="o">:</span> <span class="s1">&#39;all 0.3s ease&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>When <code>this.host.darkMode</code> changes, the CSS rule updates automatically.</p>
+<h2 id="keyframes">Keyframes</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kr">class</span> <span class="nx">AnimationStyles</span> <span class="kr">extends</span> <span class="nx">BaseStyleSheet</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">@Keyframes</span><span class="p">(</span><span class="s1">&#39;fadeIn&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">get</span> <span class="nx">fadeIn() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;0%&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="nx">opacity</span>: <span class="kt">0</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;100%&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="nx">opacity</span>: <span class="kt">1</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">@Rule</span><span class="p">(</span><span class="s1">&#39;.animated&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">get</span> <span class="nx">animated() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">animation</span><span class="o">:</span> <span class="s1">&#39;fadeIn 0.3s ease-in&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+    </article>
+    
+<aside class="sidebar">
+  <div class="sidebar-sticky">
+    
+    <nav class="sidebar-main-nav">
+      
+      
+      <a href="/docs/">Docs</a>
+      
+      <a href="/api/">API Reference</a>
+      
+    </nav>
+
+    
+    
+    <div class="toc">
+      <hr>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#defining-a-stylesheet">Defining a stylesheet</a></li>
+    <li><a href="#attaching-styles-to-components">Attaching styles to components</a></li>
+    <li><a href="#reactive-styles">Reactive styles</a></li>
+    <li><a href="#keyframes">Keyframes</a></li>
+  </ul>
+</nav>
+    </div>
+    
+
+  </div>
+</aside>
+
+  </main>
+  <footer>
+  <p>Signals Framework &copy; 2026</p>
+</footer>
+
+  <script>
+    (() => {
+      
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) {
+        const top = sidebar.getBoundingClientRect().top;
+        sidebar.querySelector('.sidebar-sticky')
+          ?.style.setProperty('--sidebar-sticky-top', top + 'px');
+      }
+
+      
+      const tocLinks = document.querySelectorAll('.toc a');
+      if (tocLinks.length) {
+        const headings = [];
+        tocLinks.forEach(link => {
+          const id = decodeURIComponent(link.getAttribute('href').slice(1));
+          const el = document.getElementById(id);
+          if (el) headings.push({ el, link });
+        });
+
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              tocLinks.forEach(l => l.classList.remove('active'));
+              const match = headings.find(h => h.el === entry.target);
+              if (match) match.link.classList.add('active');
+            }
+          });
+        }, { rootMargin: '0px 0px -70% 0px' });
+
+        headings.forEach(h => observer.observe(h.el));
+      }
+
+      
+      document.querySelectorAll('.content h2[id], .content h3[id], .content h4[id], .content h5[id]')
+        .forEach(h => {
+          const a = document.createElement('a');
+          a.href = '#' + h.id;
+          a.className = 'heading-anchor';
+          a.textContent = '#';
+          a.addEventListener('click', e => {
+            e.preventDefault();
+            const url = location.origin + location.pathname + '#' + h.id;
+            navigator.clipboard.writeText(url);
+            a.textContent = 'copied';
+            setTimeout(() => a.textContent = '#', 1500);
+          });
+          h.appendChild(a);
+        });
+
+      
+      document.querySelectorAll('.highlight').forEach(block => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'copy';
+        btn.addEventListener('click', () => {
+          const code = block.querySelector('code');
+          if (!code) return;
+          navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'copied';
+            setTimeout(() => btn.textContent = 'copy', 1500);
+          });
+        });
+        block.appendChild(btn);
+      });
+    })();
+  </script>
+</body>
+</html>

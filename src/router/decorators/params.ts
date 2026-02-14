@@ -1,7 +1,5 @@
 import { Constructor } from "../../DI/types";
 import { Router } from "../router";
-import { BaseComponent } from "../../components/base-component";
-import { services } from "../../DI/di-container";
 
 // Metadata for parameter decorators
 export interface ParamMetadata {
@@ -50,8 +48,7 @@ export function Param(paramName: string) {
         enumerable: true,
         configurable: true,
         get() {
-          // Get router from global DI container
-          const router = services.get(Router);
+          const router = (this as any).__container.get(Router);
           return router.$params[paramName] || null;
         }
       });
@@ -74,8 +71,7 @@ export function Params() {
         enumerable: true,
         configurable: true,
         get() {
-          // 'this' refers to the component instance, which has a get() method from BaseComponent
-          const router = services.get(Router);
+          const router = (this as any).__container.get(Router);
           return router.$params;
         }
       });
@@ -113,8 +109,7 @@ export function Query<This extends object>(queryName: string) {
         enumerable: true,
         configurable: true,
         get() {
-          // 'this' refers to the component instance, which has a get() method from BaseComponent
-          const router = services.get(Router);
+          const router = (this as any).__container.get(Router);
           return router.$queryParams[queryName] || null;
         }
       });
@@ -137,8 +132,7 @@ export function QueryParams() {
         enumerable: true,
         configurable: true,
         get() {
-          // 'this' refers to the component instance, which has a get() method from BaseComponent
-          const router = services.get(Router);
+          const router = (this as any).__container.get(Router);
           return router.$queryParams;
         }
       });

@@ -34,7 +34,6 @@
 import type { Constructor } from '../store/types';
 import { EntityStore } from '../store/store';
 import { convertResponse } from '../store/json-to-model';
-import { services } from '../../DI/di-container';
 
 /**
  * @Consume - Decorador para métodos de Repository
@@ -92,8 +91,8 @@ export function Consume<T>(modelClass: Constructor<T>) {
         // 3. Convertir JSON a instancias de modelo
         const instances = convertResponse(modelClass, result);
 
-        // 4. Obtener EntityStore del DI container
-        const entityStore = services.get(EntityStore);
+        // 4. Obtener EntityStore del DI container jerárquico
+        const entityStore = (this as any).__container.get(EntityStore);
 
         // 5. Almacenar en el EntityStore
         // Normaliza por ID automáticamente

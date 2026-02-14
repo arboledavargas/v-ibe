@@ -21,9 +21,10 @@ const DEPENDENCIES_KEY = Symbol('dependencies');
  * }
  * ```
  */
-export function Service<T extends Constructor>(ctor: T): T {
-  // Collect dependencies that were marked with @Inject
-  const dependencies = (ctor as any)[DEPENDENCIES_KEY] as Set<Constructor> | undefined;
+export function Service<T extends Constructor>(ctor: T, ctx: ClassDecoratorContext): T {
+  // Read dependencies from decorator metadata (populated by @Inject field decorators).
+  // Field decorators run BEFORE class decorators, so DEPENDENCIES_KEY is already set.
+  const dependencies = (ctx.metadata as any)[DEPENDENCIES_KEY] as Set<Constructor> | undefined;
 
   // Store metadata instead of registering directly
   registerServiceMetadata(ctor, {

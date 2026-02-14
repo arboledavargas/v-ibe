@@ -1,6 +1,5 @@
 import { EventListenerMetadata } from './event-types';
 import type { Constructor } from '../DI/types.ts';
-import { services } from '../DI/di-container';
 import { Service } from '../DI/decorators/service';
 
 /**
@@ -44,8 +43,8 @@ export class EventEmitter {
     this.eventTarget.addEventListener(metadata.eventType, async (event: Event) => {
       if (event instanceof CustomEvent) {
         try {
-          // Get the service instance from DI container global
-          const serviceInstance = services.get(target);
+          // Get the service instance from hierarchical DI container
+          const serviceInstance = (this as any).__container.get(target);
           const handler = (serviceInstance as any)[metadata.methodName];
 
           if (typeof handler === 'function') {

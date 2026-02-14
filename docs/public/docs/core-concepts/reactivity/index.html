@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reactivity — Signals Framework</title>
+  <meta name="description" content="Documentation for Signals Framework">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+  <nav class="path-nav">
+    <ol>
+      <li>/</li>
+      <li><a href="/">Signals Framework</a></li>
+      
+        
+      
+        
+        <li>/</li>
+        <li><a href="/docs/">Documentation</a></li>
+        
+      
+        
+        <li>/</li>
+        <li><a href="/docs/core-concepts/">Core Concepts</a></li>
+        
+      
+      
+      <li class="current-sep">/</li>
+      <li class="current"><a href="/docs/core-concepts/reactivity/">Reactivity</a></li>
+      
+    </ol>
+  </nav>
+</header>
+
+  <main>
+    <article class="content">
+      
+<h1>Reactivity</h1>
+<p>Signals Framework uses a fine-grained reactive system. Instead of re-rendering entire component trees, it tracks exactly which DOM nodes depend on which values and updates them directly.</p>
+<h2 id="state">State</h2>
+<p><code>@State</code> creates a reactive value. The framework auto-detects the type and wraps it accordingly:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kd">@State</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>           <span class="c1">// primitive → Signal
+</span></span></span><span class="line"><span class="cl"><span class="kd">@State</span> <span class="nx">user</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">};</span> <span class="c1">// object → CompositeSignal (deep proxy)
+</span></span></span><span class="line"><span class="cl"><span class="kd">@State</span> <span class="nx">items</span>: <span class="kt">string</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span><span class="c1">// array → ReactiveArray
+</span></span></span></code></pre></div><p>When you assign a new value or mutate a property, any dependent computations and DOM bindings update automatically.</p>
+<h2 id="computed">Computed</h2>
+<p><code>@Computed</code> creates a memoized derived value. It only recalculates when its dependencies change:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kd">@State</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s1">&#39;John&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">@State</span> <span class="nx">lastName</span> <span class="o">=</span> <span class="s1">&#39;Doe&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">@Computed</span>
+</span></span><span class="line"><span class="cl"><span class="kr">get</span> <span class="nx">fullName() {</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="sb">`</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">firstName</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">lastName</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Accessing <code>this.fullName</code> multiple times without changing <code>firstName</code> or <code>lastName</code> returns the cached value.</p>
+<h2 id="effect">Effect</h2>
+<p><code>@Effect</code> runs a side effect whenever its tracked dependencies change:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kd">@State</span> <span class="nx">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">@Effect</span>
+</span></span><span class="line"><span class="cl"><span class="nx">searchOnChange() {</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Searching for:&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// This runs every time this.query changes
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Effects are automatically disposed when the component is disconnected.</p>
+<h2 id="resource">Resource</h2>
+<p><code>@Resource</code> handles async data fetching with built-in loading and error states:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kd">@Resource</span><span class="p">(</span><span class="kr">async</span> <span class="p">(</span><span class="nx">signal</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/users&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">signal</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">users</span><span class="o">!:</span> <span class="nx">IResource</span><span class="p">&lt;</span><span class="nt">User</span><span class="err">[]</span><span class="p">&gt;;</span>
+</span></span></code></pre></div><p>In the template:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="nx">view() {</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">loading</span> <span class="o">&amp;&amp;</span> <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="nx">Loading</span><span class="p">...&lt;/</span><span class="nt">p</span><span class="p">&gt;}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="nb">Error</span><span class="o">:</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}&lt;/</span><span class="nt">p</span><span class="p">&gt;}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">users</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">&lt;</span><span class="nt">UserList</span> <span class="na">users</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">users</span><span class="p">()}</span> <span class="p">/&gt;}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="context">Context</h2>
+<p><code>@Ctx</code> allows child components to inherit reactive values from ancestors without explicit prop passing:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="c1">// Parent
+</span></span></span><span class="line"><span class="cl"><span class="kd">@Component</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="kr">class</span> <span class="nx">App</span> <span class="kr">extends</span> <span class="nx">BaseComponent</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">@State</span> <span class="nx">theme</span> <span class="o">=</span> <span class="s1">&#39;dark&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Any descendant
+</span></span></span><span class="line"><span class="cl"><span class="kd">@Component</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="kr">class</span> <span class="nx">DeepChild</span> <span class="kr">extends</span> <span class="nx">BaseComponent</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">@Ctx</span><span class="p">((</span><span class="nx">app</span>: <span class="kt">App</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">app</span><span class="p">.</span><span class="nx">theme</span><span class="p">)</span> <span class="nx">theme</span><span class="o">!:</span> <span class="kt">string</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">view() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="nx">Current</span> <span class="nx">theme</span><span class="o">:</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">theme</span><span class="p">}&lt;/</span><span class="nt">p</span><span class="p">&gt;;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+    </article>
+    
+<aside class="sidebar">
+  <div class="sidebar-sticky">
+    
+    <nav class="sidebar-main-nav">
+      
+      
+      <a href="/docs/">Docs</a>
+      
+      <a href="/api/">API Reference</a>
+      
+    </nav>
+
+    
+    
+    <div class="toc">
+      <hr>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#state">State</a></li>
+    <li><a href="#computed">Computed</a></li>
+    <li><a href="#effect">Effect</a></li>
+    <li><a href="#resource">Resource</a></li>
+    <li><a href="#context">Context</a></li>
+  </ul>
+</nav>
+    </div>
+    
+
+  </div>
+</aside>
+
+  </main>
+  <footer>
+  <p>Signals Framework &copy; 2026</p>
+</footer>
+
+  <script>
+    (() => {
+      
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) {
+        const top = sidebar.getBoundingClientRect().top;
+        sidebar.querySelector('.sidebar-sticky')
+          ?.style.setProperty('--sidebar-sticky-top', top + 'px');
+      }
+
+      
+      const tocLinks = document.querySelectorAll('.toc a');
+      if (tocLinks.length) {
+        const headings = [];
+        tocLinks.forEach(link => {
+          const id = decodeURIComponent(link.getAttribute('href').slice(1));
+          const el = document.getElementById(id);
+          if (el) headings.push({ el, link });
+        });
+
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              tocLinks.forEach(l => l.classList.remove('active'));
+              const match = headings.find(h => h.el === entry.target);
+              if (match) match.link.classList.add('active');
+            }
+          });
+        }, { rootMargin: '0px 0px -70% 0px' });
+
+        headings.forEach(h => observer.observe(h.el));
+      }
+
+      
+      document.querySelectorAll('.content h2[id], .content h3[id], .content h4[id], .content h5[id]')
+        .forEach(h => {
+          const a = document.createElement('a');
+          a.href = '#' + h.id;
+          a.className = 'heading-anchor';
+          a.textContent = '#';
+          a.addEventListener('click', e => {
+            e.preventDefault();
+            const url = location.origin + location.pathname + '#' + h.id;
+            navigator.clipboard.writeText(url);
+            a.textContent = 'copied';
+            setTimeout(() => a.textContent = '#', 1500);
+          });
+          h.appendChild(a);
+        });
+
+      
+      document.querySelectorAll('.highlight').forEach(block => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'copy';
+        btn.addEventListener('click', () => {
+          const code = block.querySelector('code');
+          if (!code) return;
+          navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'copied';
+            setTimeout(() => btn.textContent = 'copy', 1500);
+          });
+        });
+        block.appendChild(btn);
+      });
+    })();
+  </script>
+</body>
+</html>

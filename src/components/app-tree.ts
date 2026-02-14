@@ -2,6 +2,7 @@ import { BaseComponent } from "./base-component";
 import { Constructor } from "../DI/types";
 import type { ComponentMetadata, INode } from "./types";
 import { ISignal, isSignal } from "../reactivity/signals/signal";
+import type { ScopedContainer } from "../DI/scoped-container";
 
 export class AppTree {
   // --- 1. REGISTRO DE METADATA ---
@@ -143,5 +144,27 @@ export class AppTree {
     }
 
     return undefined; // No se encontró en la cadena de ancestros.
+  }
+
+  /**
+   * Busca recursivamente hacia arriba desde un nodo inicial el
+   * ScopedContainer más cercano en la jerarquía de componentes.
+   *
+   * Sigue el mismo patrón que findContextSignalFor:
+   * sube por el árbol buscando un nodo que tenga un container.
+   */
+  static findContainerFor(
+    startNode: INode | undefined,
+  ): ScopedContainer | undefined {
+    let currentNode = startNode;
+
+    while (currentNode) {
+      if (currentNode.container) {
+        return currentNode.container;
+      }
+      currentNode = currentNode.parent;
+    }
+
+    return undefined;
   }
 }

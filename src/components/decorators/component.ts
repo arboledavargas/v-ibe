@@ -12,13 +12,19 @@ export interface ComponentConfig {
    * - @ForDocument: Documento
    */
   styles?: (new () => BaseStyleSheet) | (new () => BaseStyleSheet)[];
-  
+
   /**
    * Si es false, el componente no usará Shadow DOM.
    * Por defecto es true (usa Shadow DOM).
    * Útil para componentes que necesitan heredar estilos del documento (ej: Link con activeClass).
    */
   useShadowDOM?: boolean;
+
+  /**
+   * Servicios que este componente provee a sí mismo y a sus hijos.
+   * Los hijos resuelven servicios subiendo por el árbol de componentes.
+   */
+  services?: (new (...args: any[]) => any)[];
 }
 
 function convertClassNameToTagName(className: string): string {
@@ -70,6 +76,7 @@ export function Component(config: ComponentConfig = {}): any {
       sharedStylesClasses: categorizedStyles.shared.length > 0 ? categorizedStyles.shared : undefined,
       documentStylesClasses: categorizedStyles.document.length > 0 ? categorizedStyles.document : undefined,
       useShadowDOM: config.useShadowDOM !== false, // Por defecto true
+      services: config.services,
     });
 
     // Registrar Custom Element
