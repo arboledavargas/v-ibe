@@ -1,6 +1,5 @@
 import { EventListenerMetadata } from './event-types';
 import type { Constructor } from '../DI/types';
-import { services } from '../DI/di-container';
 import { EventEmitter } from './event-emitter.service';
 
 export function On(eventType: string) {
@@ -20,7 +19,7 @@ export function On(eventType: string) {
 
       try {
         // Get EventEmitter from DI container and register the listener
-        const eventEmitter = services.get(EventEmitter);
+        const eventEmitter = (this as any).__container?.get(EventEmitter);
         eventEmitter.registerEventListener(ctor, metadata);
       } catch (error) {
         console.warn(`EventEmitter not available yet for registering ${ctor.name}.${String(context.name)}`);

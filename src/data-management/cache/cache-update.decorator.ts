@@ -1,4 +1,3 @@
-import { services } from '../../DI/di-container';
 import type { CacheProvider } from './cache-provider.interface';
 
 export type Constructor<T> = new (...args: any[]) => T;
@@ -40,8 +39,8 @@ export function CacheUpdate(
       // 1. Ejecutar el método original
       const result = await originalMethod.apply(this, args);
 
-      // 2. Obtener el provider del DI
-      const provider = services.get(ProviderClass);
+      // 2. Obtener el provider del DI jerárquico
+      const provider = (this as any).__container.get(ProviderClass);
 
       if (!provider) {
         console.warn(`[CacheUpdate] Provider ${ProviderClass.name} not found in DI container`);

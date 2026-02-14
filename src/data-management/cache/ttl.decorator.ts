@@ -1,4 +1,3 @@
-import { services } from '../../DI/di-container';
 import { MemoryCache } from './memory-cache';
 import { getCacheMetadata } from './cache-metadata';
 
@@ -91,8 +90,8 @@ export function TTL(ttl: number) {
       const ProviderClass = metadata.cacheProviders?.[methodName] || MemoryCache;
       const tagExtractor = metadata.cacheTagExtractors?.[methodName];
 
-      // 2. Obtener instancia del DI container (singleton)
-      const provider = services.get(ProviderClass);
+      // 2. Obtener instancia del DI container jerárquico
+      const provider = (this as any).__container.get(ProviderClass);
 
       // 3. Generar cache key
       const cacheKey = generateCacheKey(this, methodName, args);

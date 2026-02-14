@@ -1,0 +1,21 @@
+{{/* Right sidebar: main nav + Table of Contents + section navigation */}}
+<aside class="sidebar">
+  <div class="sidebar-sticky">
+    {{/* Main navigation */}}
+    <nav class="sidebar-main-nav">
+      {{ $currentURL := .RelPermalink }}
+      {{ range .Site.Menus.main }}
+      <a href="{{ .URL }}"{{ if eq $currentURL .URL }} class="active"{{ end }}>{{ .Name }}</a>
+      {{ end }}
+    </nav>
+
+    {{/* Table of contents for current page */}}
+    {{ if .TableOfContents }}
+    <div class="toc">
+      <hr>
+      {{ .TableOfContents }}
+    </div>
+    {{ end }}
+
+  </div>
+</aside>

@@ -79,6 +79,12 @@ export class BehaviorManager {
       instance[componentHostPropName] = this.hostComponent;
     }
 
+    // 2.6. Propagate DI container from host component to behavior
+    // Behaviors that use @Inject need access to the same container as the host component
+    if (this.hostComponent?.__container) {
+      instance.__container = this.hostComponent.__container;
+    }
+
     // 3. Assign configuration (JSX props for this behavior)
     // Object.assign will trigger @Prop setters
     Object.assign(instance, config);

@@ -8,7 +8,8 @@ import { renderChild } from "../jsx/dynamic/child-renderer";
 import { Fragment } from "../jsx/types";
 import { globalStylesheets } from "../styles/global-styles-registry";
 import { BehaviorManager } from "../behaviors/behavior-manager";
-// No necesitamos importar utilidades de reactive-array aquí
+import { ScopedContainer } from "../DI/scoped-container";
+import { getServiceMetadata } from "../DI/service-metadata";
 
 export class BaseComponent extends HTMLElement {
   #isInitialized = false;
@@ -134,6 +135,62 @@ export class BaseComponent extends HTMLElement {
   }
 
   /**
+   * Bootstrap services declared in @Component({ services: [...] })
+   * for a given node. Creates a ScopedContainer with parent chain resolution.
+   * Used by both init() (DOM path) and createAndRenderComponent() (JSX path).
+   */
+  private static bootstrapServicesForNode(
+    node: INode,
+    metadata: { services?: Constructor[] },
+    sync: boolean = false,
+  ): void {
+    if (!metadata.services?.length) return;
+
+    // Find parent container by walking up the AppTree
+    const parentContainer = node.parent
+      ? AppTree.findContainerFor(node.parent)
+      : undefined;
+
+    const container = new ScopedContainer(parentContainer);
+
+    // First pass: register all services
+    for (const ServiceClass of metadata.services) {
+      container.register(ServiceClass);
+    }
+
+    // Second pass: register dependency relationships
+    // (must happen after ALL services are registered, since order in the array is arbitrary)
+    for (const ServiceClass of metadata.services) {
+      const serviceMeta = getServiceMetadata(ServiceClass);
+      if (serviceMeta) {
+        for (const dep of serviceMeta.dependencies) {
+          // Only register if both are in this scope
+          if (metadata.services.includes(dep)) {
+            container.registerDependency(ServiceClass, dep);
+          }
+        }
+      }
+    }
+
+    // Bootstrap: sync for JSX path, async for DOM path
+    if (sync) {
+      container.bootstrapSync();
+    }
+
+    node.container = container;
+  }
+
+  /**
+   * Assign __container to a component instance.
+   * Uses the node's own container if it has one, otherwise walks up the tree.
+   */
+  private static assignContainer(instance: BaseComponent, node: INode): void {
+    (instance as any).__container = node.container
+      ?? AppTree.findContainerFor(node)
+      ?? undefined;
+  }
+
+  /**
    * Proceso de inicialización asíncrona del componente
    * Incluye renderizado progresivo
    */
@@ -142,6 +199,16 @@ export class BaseComponent extends HTMLElement {
     // Paso 2: Setup del árbol
     const parentNode = this.findParentNode();
     this.appNode = AppTree.registerInstance(this, parentNode);
+
+    // Paso 2.5: Bootstrap services si este componente los declara
+    const metadata = AppTree.getMetadata(this.constructor as Constructor<BaseComponent>);
+    if (metadata?.services?.length) {
+      BaseComponent.bootstrapServicesForNode(this.appNode, metadata);
+      // Await async bootstrap for DOM path
+      await this.appNode.container!.bootstrap();
+    }
+    // Assign container (own or inherited from parent)
+    BaseComponent.assignContainer(this, this.appNode);
 
     // Paso 3: Inicialización normal (contextos, recursos, etc)
     this.initializeForJSX();
@@ -228,6 +295,11 @@ export class BaseComponent extends HTMLElement {
   }
 
   disconnectedCallback() {
+    // Dispose container si este nodo lo tiene
+    if (this.appNode?.container) {
+      this.appNode.container.dispose();
+    }
+
     // Limpiar estilos globales registrados
     if (this.#globalStylesheetIds.length > 0) {
       globalStylesheets.unregister(this.#globalStylesheetIds);
@@ -499,6 +571,14 @@ export class BaseComponent extends HTMLElement {
 
       // 4. Asigna el nodo del árbol a la instancia
       instance.appNode = node;
+
+      // 4.5. Bootstrap services si este componente los declara (sync para JSX)
+      const childMetadata = AppTree.getMetadata(ComponentClass as unknown as Constructor<BaseComponent>);
+      if (childMetadata?.services?.length) {
+        BaseComponent.bootstrapServicesForNode(node, childMetadata, true);
+      }
+      // Assign container (own or inherited from parent)
+      BaseComponent.assignContainer(instance, node);
 
       // 5. Aplica props
       if (props) {

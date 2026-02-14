@@ -1,7 +1,6 @@
 import { Service } from "../DI/decorators/service";
 import { PolicyDecision, getPolicyRules, PolicyDecisionType } from "./decorators/base-policy";
 import { RouteCandidate } from "./trie.types";
-import { services } from "../DI/di-container";
 import { reactiveContext } from "../reactivity/reactive-context";
 
 /**
@@ -219,7 +218,7 @@ export class PolicyEvaluator {
 
       // Obtener instancias de policies desde DI
       const policyInstances = candidate.policies.map(PolicyClass => {
-        const instance = services.get<any>(PolicyClass);
+        const instance = (this as any).__container.get(PolicyClass);
 
         // Inyectar metadata si existe
         if (candidate.metadata) {

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Core Concepts — Signals Framework</title>
+  <meta name="description" content="Documentation for Signals Framework">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+  <nav class="path-nav">
+    <ol>
+      <li>/</li>
+      <li><a href="/">Signals Framework</a></li>
+      
+        
+      
+        
+        <li>/</li>
+        <li><a href="/docs/">Documentation</a></li>
+        
+      
+      
+      <li class="current-sep">/</li>
+      <li class="current"><a href="/docs/core-concepts/">Core Concepts</a></li>
+      
+    </ol>
+  </nav>
+</header>
+
+  <main>
+    <article class="content">
+      
+<h1>Core Concepts</h1>
+<p>The fundamental building blocks of Signals Framework.</p>
+
+
+<div class="time-list">
+  <ul>
+    
+    <li>
+      <a href="/docs/core-concepts/reactivity/">Reactivity</a>
+      
+    </li>
+    
+    <li>
+      <a href="/docs/core-concepts/dependency-injection/">Dependency Injection</a>
+      
+    </li>
+    
+  </ul>
+</div>
+
+
+    </article>
+    
+<aside class="sidebar">
+  <div class="sidebar-sticky">
+    
+    <nav class="sidebar-main-nav">
+      
+      
+      <a href="/docs/">Docs</a>
+      
+      <a href="/api/">API Reference</a>
+      
+    </nav>
+
+    
+    
+    <div class="toc">
+      <hr>
+      <nav id="TableOfContents"></nav>
+    </div>
+    
+
+  </div>
+</aside>
+
+  </main>
+  <footer>
+  <p>Signals Framework &copy; 2026</p>
+</footer>
+
+  <script>
+    (() => {
+      
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) {
+        const top = sidebar.getBoundingClientRect().top;
+        sidebar.querySelector('.sidebar-sticky')
+          ?.style.setProperty('--sidebar-sticky-top', top + 'px');
+      }
+
+      
+      const tocLinks = document.querySelectorAll('.toc a');
+      if (tocLinks.length) {
+        const headings = [];
+        tocLinks.forEach(link => {
+          const id = decodeURIComponent(link.getAttribute('href').slice(1));
+          const el = document.getElementById(id);
+          if (el) headings.push({ el, link });
+        });
+
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              tocLinks.forEach(l => l.classList.remove('active'));
+              const match = headings.find(h => h.el === entry.target);
+              if (match) match.link.classList.add('active');
+            }
+          });
+        }, { rootMargin: '0px 0px -70% 0px' });
+
+        headings.forEach(h => observer.observe(h.el));
+      }
+
+      
+      document.querySelectorAll('.content h2[id], .content h3[id], .content h4[id], .content h5[id]')
+        .forEach(h => {
+          const a = document.createElement('a');
+          a.href = '#' + h.id;
+          a.className = 'heading-anchor';
+          a.textContent = '#';
+          a.addEventListener('click', e => {
+            e.preventDefault();
+            const url = location.origin + location.pathname + '#' + h.id;
+            navigator.clipboard.writeText(url);
+            a.textContent = 'copied';
+            setTimeout(() => a.textContent = '#', 1500);
+          });
+          h.appendChild(a);
+        });
+
+      
+      document.querySelectorAll('.highlight').forEach(block => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'copy';
+        btn.addEventListener('click', () => {
+          const code = block.querySelector('code');
+          if (!code) return;
+          navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'copied';
+            setTimeout(() => btn.textContent = 'copy', 1500);
+          });
+        });
+        block.appendChild(btn);
+      });
+    })();
+  </script>
+</body>
+</html>

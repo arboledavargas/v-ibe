@@ -1,6 +1,4 @@
 import { Constructor } from '../types';
-import { registerServiceMetadata, getServiceMetadata } from '../service-metadata';
-import { DIContainer, services } from '../di-container';
 import { DEPENDENCIES_KEY } from './service';
 
 /**
@@ -44,33 +42,16 @@ export function Inject(ctor: Constructor) {
       throw new Error('@Inject solo puede usarse en fields');
     }
 
-    // Track dependency in class metadata
-    ctx.addInitializer(function (this: any) {
-      const parentClass = this.constructor as Constructor;
+    // Track dependency in decorator metadata (runs at CLASS DEFINITION time).
+    // ctx.metadata is shared across all decorators of the same class.
+    // Field decorators run BEFORE the class decorator (@Service),
+    // so dependencies will be available when @Service reads them.
+    if (!(ctx.metadata as any)[DEPENDENCIES_KEY]) {
+      (ctx.metadata as any)[DEPENDENCIES_KEY] = new Set<Constructor>();
+    }
+    ((ctx.metadata as any)[DEPENDENCIES_KEY] as Set<Constructor>).add(ctor);
 
-      // Initialize dependencies set if it doesn't exist
-      if (!(parentClass as any)[DEPENDENCIES_KEY]) {
-        (parentClass as any)[DEPENDENCIES_KEY] = new Set<Constructor>();
-      }
-
-      // Add this dependency to the class's dependency set
-      (parentClass as any)[DEPENDENCIES_KEY].add(ctor);
-
-      // Update service metadata with this dependency
-      // This will be used when registering services in a container
-      const existingMetadata = getServiceMetadata(parentClass);
-      if (existingMetadata) {
-        existingMetadata.dependencies.add(ctor);
-      } else {
-        // If metadata doesn't exist yet, create it
-        // This can happen if @Inject is used before @Service
-        registerServiceMetadata(parentClass, {
-          dependencies: new Set([ctor]),
-        });
-      }
-    });
-
-    // Property getter for lazy access (value is already initialized after bootstrap)
+    // Property getter for lazy access (runs at INSTANCE creation time)
     // Gets container from instance association (set during bootstrap)
     ctx.addInitializer(function () {
       const privateKey = Symbol(`__injected_${String(ctx.name)}`);
@@ -85,15 +66,13 @@ export function Inject(ctor: Constructor) {
           }
 
           // Get container associated with this instance
-          // This was set when the instance was created during bootstrap
-          const container = (this as any).__container ||
-                           DIContainer.getContainerForInstance(this) ||
-                           services; // Fallback to global singleton
+          // Set during bootstrap (for services) or by BaseComponent (for components)
+          const container = (this as any).__container;
 
           if (!container) {
             throw new Error(
-              `Service ${ctor.name} not available. Instance not associated with a container. ` +
-              `Make sure bootstrap() has been called.`
+              `@Inject(${ctor.name}): No container found on ${this.constructor?.name || 'unknown'}. ` +
+              `Ensure this instance is within a component tree that provides ${ctor.name}.`
             );
           }
 
