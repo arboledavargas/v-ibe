@@ -2,7 +2,7 @@
 title: "Signals Framework"
 ---
 
-A modern TypeScript framework for building SPAs with persistent class-based components and fine-grained reactivity. No virtual DOM, no hooks, no re-renders. ~27KB min+gzip.
+A modern framework for building SPAs with persistent class-based components and fine-grained reactivity. No virtual DOM, no hooks, no re-renders. ~27KB min+gzip.
 
 ## Why Signals Framework?
 
