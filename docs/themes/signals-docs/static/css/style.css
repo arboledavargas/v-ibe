@@ -64,7 +64,12 @@ html {
 body {
   font: var(--font-size-base) / var(--phi) var(--font-family-mono);
   font-feature-settings: "liga" 1, "calt" 1;
-  background: var(--color-bg-primary);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-primary);
+  background-image: radial-gradient(circle at center, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+  background-attachment: fixed;
   min-height: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto;
