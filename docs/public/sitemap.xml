@@ -2,30 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://signalsframework.dev/docs/getting-started/</loc>
+    <loc>http://localhost:1313/docs/getting-started/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/getting-started/installation/</loc>
+    <loc>http://localhost:1313/docs/getting-started/installation/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/core-concepts/reactivity/</loc>
+    <loc>http://localhost:1313/docs/core-concepts/reactivity/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/features/routing/</loc>
+    <loc>http://localhost:1313/docs/features/routing/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/core-concepts/</loc>
+    <loc>http://localhost:1313/docs/core-concepts/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/core-concepts/dependency-injection/</loc>
+    <loc>http://localhost:1313/docs/core-concepts/dependency-injection/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/features/styles/</loc>
+    <loc>http://localhost:1313/docs/features/styles/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/getting-started/first-component/</loc>
+    <loc>http://localhost:1313/docs/getting-started/first-component/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/features/</loc>
+    <loc>http://localhost:1313/docs/features/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/categories/</loc>
+    <loc>http://localhost:1313/categories/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/docs/</loc>
+    <loc>http://localhost:1313/docs/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/</loc>
+    <loc>http://localhost:1313/</loc>
   </url><url>
-    <loc>https://signalsframework.dev/tags/</loc>
+    <loc>http://localhost:1313/tags/</loc>
   </url>
 </urlset>
