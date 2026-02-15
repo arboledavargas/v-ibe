@@ -129,19 +129,6 @@ h1, h2, h3, h4, h5 {
   font-weight: bold;
 }
 
-h1::before {
-  content: '';
-  display: inline-block;
-  width: 1.2em;
-  height: 1.2em;
-  margin-left: -1.5em;
-  margin-right: 0.3em;
-  vertical-align: middle;
-  background: currentColor;
-  -webkit-mask: url('../img/asterisk.svg') no-repeat center / contain;
-  mask: url('../img/asterisk.svg') no-repeat center / contain;
-}
-
 h1:first-child,
 h2:first-child,
 h3:first-child {
