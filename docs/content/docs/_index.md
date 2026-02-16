@@ -16,8 +16,8 @@ Everything you need to build with Signals Framework, from installation to advanc
 
 ## Advanced Features
 
-- [Routing](/docs/advanced-features/routing/)
-- [Behaviors](/docs/advanced-features/behaviors/)
-- [Normalized Data Store](/docs/advanced-features/data-management/)
-- [Cache](/docs/advanced-features/cache/)
-- [Reactive Components](/docs/advanced-features/reactive-components/)
+- [Routing](/docs/routing/)
+- [Behaviors](/docs/behaviors/)
+- [Normalized Data Store](/docs/data-management/)
+- [Cache](/docs/cache/)
+- [Reactive Components](/docs/reactive-components/)

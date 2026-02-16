@@ -8,7 +8,7 @@ Components in Signals Framework are classes that extend `BaseComponent`. They us
 ## A simple counter
 
 ```typescript
-import { Component, BaseComponent, State } from 'signalsframework';
+import { Component, BaseComponent, State } from '...';
 
 @Component()
 class Counter extends BaseComponent {
