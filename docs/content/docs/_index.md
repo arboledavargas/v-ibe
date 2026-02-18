@@ -3,7 +3,7 @@ title: "Documentation"
 layout: "plain"
 ---
 
-Everything you need to build with Signals Framework, from installation to advanced patterns.
+Everything you need to build with v-ibe, from installation to advanced patterns.
 
 ## Core Concepts
 

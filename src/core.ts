@@ -9,7 +9,7 @@ import { EventEmitter } from './events-handler/event-emitter.service';
  *
  * @example
  * ```typescript
- * import { BaseComponent, Component, core, RouteView } from 'signalsframework';
+ * import { BaseComponent, Component, core, RouteView } from 'v-ibe';
  *
  * @Component({
  *   services: [...core, AuthService, MyPolicy]

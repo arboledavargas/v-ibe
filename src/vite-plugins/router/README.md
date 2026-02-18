@@ -18,7 +18,7 @@ Plugin de Vite para análisis estático y generación automática de rutas a par
 ```typescript
 // vite.config.ts
 import { defineConfig } from 'vite';
-import { routeGeneratorPlugin } from 'signalsframework/vite-plugins';
+import { routeGeneratorPlugin } from 'v-ibe/vite-plugins';
 
 export default defineConfig({
   plugins: [
@@ -77,7 +77,7 @@ interface RouteGeneratorPluginOptions {
 
 ```typescript
 // src/pages/home.ts
-import { Route } from 'signalsframework/router';
+import { Route } from 'v-ibe/router';
 
 @Route('/')
 export class HomePage {
@@ -138,8 +138,8 @@ export const generatedRoutes = [
 
 ```typescript
 // src/main.ts
-import { services } from 'signalsframework/di';
-import { Router } from 'signalsframework/router';
+import { services } from 'v-ibe/di';
+import { Router } from 'v-ibe/router';
 import { generatedRoutes } from './router/generated-routes';
 
 // Obtener el router
@@ -238,9 +238,9 @@ Genera:
 
 ```typescript
 // src/app.ts
-import { Router } from 'signalsframework/router';
+import { Router } from 'v-ibe/router';
 import { generatedRoutes } from './router/generated-routes';
-import { services } from 'signalsframework/di';
+import { services } from 'v-ibe/di';
 
 export function setupRouter() {
   const router = services.get(Router);

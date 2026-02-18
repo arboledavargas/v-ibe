@@ -14,7 +14,7 @@ weight: 1
 ```bash
 npm create vite@latest my-app -- --template vanilla-ts
 cd my-app
-npm install signalsframework
+npm install v-ibe
 ```
 
 ## Configure TypeScript
@@ -28,7 +28,7 @@ Update your `tsconfig.json` to enable decorators and JSX:
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "jsxImportSource": "signalsframework/jsx",
+    "jsxImportSource": "v-ibe/jsx",
     "experimentalDecorators": false,
     "useDefineForClassFields": true,
     "strict": true
@@ -36,13 +36,13 @@ Update your `tsconfig.json` to enable decorators and JSX:
 }
 ```
 
-> Note: Signals Framework uses Stage 3 decorators, not legacy TypeScript decorators. Make sure `experimentalDecorators` is `false` or absent.
+> Note: v-ibe uses Stage 3 decorators, not legacy TypeScript decorators. Make sure `experimentalDecorators` is `false` or absent.
 
 ## Configure Vite
 
 ```typescript
 import { defineConfig } from 'vite';
-import { jsxSignalsPlugin } from 'signalsframework/vite-plugins';
+import { jsxSignalsPlugin } from 'v-ibe/vite-plugins';
 
 export default defineConfig({
   plugins: [
@@ -56,7 +56,7 @@ export default defineConfig({
 Create a minimal component to verify everything works:
 
 ```typescript
-import { Component, BaseComponent, State } from 'signalsframework';
+import { Component, BaseComponent, State } from 'v-ibe';
 
 @Component()
 class HelloWorld extends BaseComponent {

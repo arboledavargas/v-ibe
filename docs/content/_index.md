@@ -1,14 +1,14 @@
 ---
-title: "Signals Framework"
+title: "v-ibe"
 ---
 
 A modern framework for building SPAs with persistent class-based components and fine-grained reactivity. No virtual DOM, no hooks, no re-renders. ~27KB min+gzip.
 
-## Why Signals Framework?
+## Why v-ibe?
 
 Most frameworks treat UI as `UI = f(state)` — a pure function that re-executes on every change. Every state update means re-running components, diffing virtual trees, and reconciling the DOM.
 
-Signals Framework takes a different approach: your components are **long-lived objects** that react to change. They instantiate once, they hold real state, and they update the DOM surgically when something changes.
+v-ibe takes a different approach: your components are **long-lived objects** that react to change. They instantiate once, they hold real state, and they update the DOM surgically when something changes.
 
 ## At a glance
 

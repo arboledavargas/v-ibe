@@ -3,12 +3,12 @@ title: "Styles"
 weight: 2
 ---
 
-Signals Framework provides reactive CSS-in-JS through stylesheet classes. Styles are scoped to components via Shadow DOM and can react to state changes.
+v-ibe provides reactive CSS-in-JS through stylesheet classes. Styles are scoped to components via Shadow DOM and can react to state changes.
 
 ## Defining a stylesheet
 
 ```typescript
-import { BaseStyleSheet, Rule, Keyframes } from 'signalsframework';
+import { BaseStyleSheet, Rule, Keyframes } from 'v-ibe';
 
 class ButtonStyles extends BaseStyleSheet {
   @Rule(':host')

@@ -1,6 +1,7 @@
 {
-  "name": "signalsframework",
+  "name": "v-ibe",
   "version": "1.0.0",
+  "description": "A reactive framework for SPAs using signals, class-based web components, and JSX with direct DOM updates",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -58,11 +59,11 @@
     "jsx",
     "typescript"
   ],
-  "author": "Tu Nombre",
+  "author": "Julian Vargas <arboledavargas@outlook.com> (https://github.com/arboledavargas)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com:Signals-Framework/framework.git"
+    "url": "git+https://github.com/arboledavargas/v-ibe.git"
   },
   "peerDependencies": {
     "typescript": ">=5.0.0",

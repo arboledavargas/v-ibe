@@ -74,4 +74,4 @@ export interface ComponentProps {
   [propName: string]: PropValue;
 }
 
-export const Fragment = Symbol.for("signalsframework.fragment");
+export const Fragment = Symbol.for("v-ibe.fragment");

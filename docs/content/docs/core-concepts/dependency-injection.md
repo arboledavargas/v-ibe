@@ -3,12 +3,12 @@ title: "Dependency Injection"
 weight: 2
 ---
 
-Signals Framework includes a hierarchical DI system. Services are instantiated eagerly in topological order and resolved through a parent chain of scoped containers.
+v-ibe includes a hierarchical DI system. Services are instantiated eagerly in topological order and resolved through a parent chain of scoped containers.
 
 ## Defining a service
 
 ```typescript
-import { Service, Inject } from 'signalsframework';
+import { Service, Inject } from 'v-ibe';
 
 @Service
 class AuthService {

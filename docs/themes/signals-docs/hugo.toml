@@ -1,6 +1,6 @@
 name = "signals-docs"
 license = "MIT"
-description = "Documentation theme for Signals Framework"
+description = "Documentation theme for v-ibe"
 min_version = "0.116.0"
 
 [author]

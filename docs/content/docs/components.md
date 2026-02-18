@@ -8,7 +8,7 @@ Components are classes that extend `BaseComponent` and register as Custom Elemen
 ## Defining a component
 
 ```typescript
-import { Component, BaseComponent, State } from 'signalsframework';
+import { Component, BaseComponent, State } from 'v-ibe';
 
 @Component()
 class Counter extends BaseComponent {
