@@ -3,7 +3,7 @@ title: "Events"
 weight: 4
 ---
 
-Components communicate through Custom Events — the browser's native event system. Signals Framework provides two decorators: `@Emit` to dispatch events and `@On` to listen.
+Components communicate through Custom Events — the browser's native event system. v-ibe provides two decorators: `@Emit` to dispatch events and `@On` to listen.
 
 ## Emitting events
 

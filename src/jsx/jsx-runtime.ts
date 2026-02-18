@@ -13,7 +13,7 @@ import { Fragment } from "./types";
 
 function jsx(..._args: any[]): any {
   throw new Error(
-    '[SignalsFramework] jsx() should never be called directly. ' +
+    '[v-ibe] jsx() should never be called directly. ' +
     'Ensure jsxContextualPlugin is enabled in your vite.config.ts'
   );
 }

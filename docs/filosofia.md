@@ -1,8 +1,8 @@
 # Filosofía
 
-> *Signals Framework vuelve a simplificar el desarrollo web.*
+> *v-ibe vuelve a simplificar el desarrollo web.*
 
-Signals Framework permite crear aplicaciones **declarativas, reactivas y estructuradas**, sin sacrificar rendimiento ni claridad.
+v-ibe permite crear aplicaciones **declarativas, reactivas y estructuradas**, sin sacrificar rendimiento ni claridad.
 
 Tomamos ideas probadas del ecosistema web moderno y las integramos de forma natural, coherente y predecible.
 
@@ -21,7 +21,7 @@ Creemos que la web ya es una plataforma poderosa.
 
 Priorizamos **estándares nativos** antes que abstracciones propietarias, para reducir complejidad y maximizar interoperabilidad.
 
-Signals Framework se apoya directamente en estándares como:
+v-ibe se apoya directamente en estándares como:
 
 * Web Components
 * Ciclos de vida nativos
@@ -47,7 +47,7 @@ Signals es el mecanismo que permite este modelo, eliminando renders globales, re
 
 Creemos que los sistemas grandes necesitan **estructura**, pero también **composición flexible**.
 
-Signals Framework combina **Programación Orientada a Objetos** con **programación funcional**, siguiendo la misma filosofía que JavaScript y TypeScript:
+v-ibe combina **Programación Orientada a Objetos** con **programación funcional**, siguiendo la misma filosofía que JavaScript y TypeScript:
 objetos para modelar el dominio, funciones para expresar comportamiento.
 
 Las clases definen límites claros, ciclos de vida y responsabilidades.
@@ -61,7 +61,7 @@ El resultado es un modelo híbrido donde la estructura no limita la flexibilidad
 
 Creemos que la inyección de dependencias es fundamental para escalar aplicaciones, pero que su complejidad debe ser intencional.
 
-Signals Framework adopta un enfoque de **dependency injection simplificado**, suficiente para estructurar sistemas complejos sin introducir fricción innecesaria.
+v-ibe adopta un enfoque de **dependency injection simplificado**, suficiente para estructurar sistemas complejos sin introducir fricción innecesaria.
 
 Porque a veces, **menos es más**.
 
@@ -71,7 +71,7 @@ Porque a veces, **menos es más**.
 
 Creemos que el estado no solo controla el comportamiento, sino también la presentación.
 
-Signals Framework adopta un enfoque de **state-driven styling**, donde los estilos reaccionan al estado con la misma precisión que la UI.
+v-ibe adopta un enfoque de **state-driven styling**, donde los estilos reaccionan al estado con la misma precisión que la UI.
 
 CSS in JS es el mecanismo que permite integrar estado y diseño de forma directa y coherente.
 
@@ -81,7 +81,7 @@ CSS in JS es el mecanismo que permite integrar estado y diseño de forma directa
 
 Creemos que un framework debe tomar decisiones claras.
 
-Signals Framework es **opinionated por diseño**: resolvemos los problemas estructurales de antemano y entregamos un sistema coherente, listo para usar.
+v-ibe es **opinionated por diseño**: resolvemos los problemas estructurales de antemano y entregamos un sistema coherente, listo para usar.
 
 Así puedes enfocarte en resolver problemas reales, no en decisiones repetidas.
 
@@ -91,7 +91,7 @@ Así puedes enfocarte en resolver problemas reales, no en decisiones repetidas.
 
 Creemos que una aplicación es más que una capa de UI.
 
-Signals Framework ofrece un **sistema integrado**, donde las piezas centrales están diseñadas para trabajar juntas desde el inicio:
+v-ibe ofrece un **sistema integrado**, donde las piezas centrales están diseñadas para trabajar juntas desde el inicio:
 
 * Router
 * Normalized data store

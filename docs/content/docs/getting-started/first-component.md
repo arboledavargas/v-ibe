@@ -3,7 +3,7 @@ title: "Your First Component"
 weight: 2
 ---
 
-Components in Signals Framework are classes that extend `BaseComponent`. They use the `@Component` decorator and define a `view()` method that returns JSX.
+Components in v-ibe are classes that extend `BaseComponent`. They use the `@Component` decorator and define a `view()` method that returns JSX.
 
 ## A simple counter
 

@@ -1,4 +1,4 @@
-# Signals Framework
+# v-ibe
 
 Modern framework for single page applications.
 
@@ -6,9 +6,9 @@ Modern framework for single page applications.
 
 ## What is this?
 
-**Signals Framework** is an opinionated front-end framework for building **SPA applications** using **persistent class-based components**, **signals**, and **direct DOM updates**.
+**v-ibe** is an opinionated front-end framework for building **SPA applications** using **persistent class-based components**, **signals**, and **direct DOM updates**.
 
-Most frameworks treat UI as `UI = f(state)` — a pure function that re-executes on every change. Signals Framework treats UI as a long-lived system made of objects that react to change. There is no virtual DOM, no component re-execution, no hooks, and no immutable state gymnastics. Components are real objects that live for the lifetime of the UI and update themselves incrementally when their state changes.
+Most frameworks treat UI as `UI = f(state)` — a pure function that re-executes on every change. v-ibe treats UI as a long-lived system made of objects that react to change. There is no virtual DOM, no component re-execution, no hooks, and no immutable state gymnastics. Components are real objects that live for the lifetime of the UI and update themselves incrementally when their state changes.
 
 - Components instantiate once, not on every render
 - State is mutable and tracked automatically
@@ -46,7 +46,7 @@ export class HelloWorld extends BaseComponent {
 ## Installation
 
 ```bash
-npm install signalsframework
+npm install v-ibe
 ```
 
 ---
@@ -155,7 +155,7 @@ Stage 3 decorators are standard JavaScript. They provide better ergonomics than 
 
 **How is this different from Solid?**
 
-Solid has great reactivity but is minimal by design. Signals Framework is opinionated and complete — router, DI, normalized store, caching, and styles all designed to work together.
+Solid has great reactivity but is minimal by design. v-ibe is opinionated and complete — router, DI, normalized store, caching, and styles all designed to work together.
 
 **Why no SSR yet?**
 

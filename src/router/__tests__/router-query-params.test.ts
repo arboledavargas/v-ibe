@@ -29,7 +29,8 @@ describe('Router - Query Params Test', () => {
       location: {
         pathname: '/',
         search: '',
-        origin: 'http://localhost'
+        origin: 'http://localhost',
+        href: 'http://localhost/'
       },
       addEventListener: vi.fn(),
     } as any;

@@ -9,15 +9,15 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      'signalsframework/jsx-runtime': resolve(__dirname, './src/jsx/jsx-runtime.ts'),
-      'signalsframework/jsx-dev-runtime': resolve(__dirname, './src/jsx/jsx-dev-runtime.ts'),
-      'signalsframework': resolve(__dirname, './src/index.ts'),
+      'v-ibe/jsx-runtime': resolve(__dirname, './src/jsx/jsx-runtime.ts'),
+      'v-ibe/jsx-dev-runtime': resolve(__dirname, './src/jsx/jsx-dev-runtime.ts'),
+      'v-ibe': resolve(__dirname, './src/index.ts'),
     },
   },
 
   esbuild: {
     jsx: 'automatic',
-    jsxImportSource: 'signalsframework',
+    jsxImportSource: 'v-ibe',
   },
 
   plugins: [

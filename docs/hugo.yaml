@@ -1,15 +1,21 @@
-baseURL: 'https://signalsframework.dev/'
+baseURL: 'https://v-ibe.dev/'
 languageCode: 'en'
-title: 'Signals Framework'
+title: 'v-ibe'
 theme: 'signals-docs'
 
 markup:
   highlight:
     noClasses: false
+  goldmark:
+    renderer:
+      unsafe: true
+    renderHooks:
+      link:
+        useEmbedded: fallback
 
 params:
   author: 'Julian Vargas'
-  description: 'Documentation for Signals Framework'
+  description: 'Documentation for v-ibe'
 
 menu:
   main:

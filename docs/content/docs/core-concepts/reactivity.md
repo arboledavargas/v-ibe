@@ -3,7 +3,7 @@ title: "Reactivity"
 weight: 1
 ---
 
-Signals Framework uses a fine-grained reactive system. Instead of re-rendering entire component trees, it tracks exactly which DOM nodes depend on which values and updates them directly.
+v-ibe uses a fine-grained reactive system. Instead of re-rendering entire component trees, it tracks exactly which DOM nodes depend on which values and updates them directly.
 
 ## State
 

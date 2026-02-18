@@ -90,7 +90,7 @@ describe('Composición automática - CompositeSignal y ReactiveArray', () => {
         user: {
           name: 'Julian',
           projects: [
-            { id: 1, name: 'SignalsFramework' },
+            { id: 1, name: 'v-ibe' },
             { id: 2, name: 'mocca-backend' }
           ]
         }
@@ -103,7 +103,7 @@ describe('Composición automática - CompositeSignal y ReactiveArray', () => {
       expect(user).toBeInstanceOf(CompositeSignal);
       expect(projects).toBeInstanceOf(ReactiveArray);
       expect(firstProject).toBeInstanceOf(CompositeSignal);
-      expect(firstProject.get('name')).toBe('SignalsFramework');
+      expect(firstProject.get('name')).toBe('v-ibe');
     });
 
     it('debe manejar array de objetos con arrays anidados', () => {

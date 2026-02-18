@@ -3,7 +3,7 @@ title: "Routing"
 weight: 1
 ---
 
-Signals Framework includes a declarative router with lazy loading, parameter extraction, and policy-based guards.
+v-ibe includes a declarative router with lazy loading, parameter extraction, and policy-based guards.
 
 ## Defining routes
 

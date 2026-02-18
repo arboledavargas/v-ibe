@@ -26,7 +26,7 @@ describe('Router - Route Candidates Granularity', () => {
     // Mock window
     global.window = {
       history: { pushState: vi.fn() },
-      location: { pathname: '/', search: '', origin: 'http://localhost' },
+      location: { pathname: '/', search: '', origin: 'http://localhost', href: 'http://localhost/' },
       addEventListener: vi.fn(),
     } as any;
 
