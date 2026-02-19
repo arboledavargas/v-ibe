@@ -11,14 +11,14 @@
     "noUnusedParameters": false,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "v-ibe",
+    "jsxImportSource": "@v-ibe/core",
     "types": ["vite/client"],
     "paths": {
       // Paths needed for type-checking the framework while it references itself
-      "v-ibe": ["./src/index.ts"],
-      "v-ibe/jsx-runtime": ["./src/jsx/jsx-runtime.ts"],
-      "v-ibe/jsx-dev-runtime": ["./src/jsx/jsx-dev-runtime.ts"],
-      "v-ibe/vite-plugins": ["./src/vite-plugins/index.ts"]
+      "@v-ibe/core": ["./src/index.ts"],
+      "@v-ibe/core/jsx-runtime": ["./src/jsx/jsx-runtime.ts"],
+      "@v-ibe/core/jsx-dev-runtime": ["./src/jsx/jsx-dev-runtime.ts"],
+      "@v-ibe/core/vite-plugins": ["./src/vite-plugins/index.ts"]
     }
   },
   "include": ["src/**/*", "app/**/*"],

@@ -66,7 +66,7 @@ const DEFAULT_OPTIONS: Required<RouteGeneratorPluginOptions> = {
  * @example
  * ```typescript
  * // vite.config.ts (en el proyecto del usuario)
- * import { routeGeneratorPlugin } from 'v-ibe/vite-plugins';
+ * import { routeGeneratorPlugin } from '@v-ibe/core/vite-plugins';
  * 
  * export default defineConfig({
  *   plugins: [

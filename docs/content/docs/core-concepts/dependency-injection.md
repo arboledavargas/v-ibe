@@ -8,7 +8,7 @@ v-ibe includes a hierarchical DI system. Services are instantiated eagerly in to
 ## Defining a service
 
 ```typescript
-import { Service, Inject } from 'v-ibe';
+import { Service, Inject } from '@v-ibe/core';
 
 @Service
 class AuthService {
