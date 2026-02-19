@@ -9,15 +9,15 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      'v-ibe/jsx-runtime': resolve(__dirname, './src/jsx/jsx-runtime.ts'),
-      'v-ibe/jsx-dev-runtime': resolve(__dirname, './src/jsx/jsx-dev-runtime.ts'),
-      'v-ibe': resolve(__dirname, './src/index.ts'),
+      '@v-ibe/core/jsx-runtime': resolve(__dirname, './src/jsx/jsx-runtime.ts'),
+      '@v-ibe/core/jsx-dev-runtime': resolve(__dirname, './src/jsx/jsx-dev-runtime.ts'),
+      '@v-ibe/core': resolve(__dirname, './src/index.ts'),
     },
   },
 
   esbuild: {
     jsx: 'automatic',
-    jsxImportSource: 'v-ibe',
+    jsxImportSource: '@v-ibe/core',
   },
 
   plugins: [

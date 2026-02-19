@@ -6,3 +6,7 @@ dist/
 docs/public/
 docs/resources/
 docs/.hugo_build.lock
+
+# Pulumi
+infra/node_modules/
+infra/bin/

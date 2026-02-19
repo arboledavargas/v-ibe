@@ -14,7 +14,7 @@ weight: 1
 ```bash
 npm create vite@latest my-app -- --template vanilla-ts
 cd my-app
-npm install v-ibe
+npm install @v-ibe/core
 ```
 
 ## Configure TypeScript
@@ -28,7 +28,7 @@ Update your `tsconfig.json` to enable decorators and JSX:
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "jsxImportSource": "v-ibe/jsx",
+    "jsxImportSource": "@v-ibe/core/jsx",
     "experimentalDecorators": false,
     "useDefineForClassFields": true,
     "strict": true
@@ -42,7 +42,7 @@ Update your `tsconfig.json` to enable decorators and JSX:
 
 ```typescript
 import { defineConfig } from 'vite';
-import { jsxSignalsPlugin } from 'v-ibe/vite-plugins';
+import { jsxSignalsPlugin } from '@v-ibe/core/vite-plugins';
 
 export default defineConfig({
   plugins: [
@@ -56,7 +56,7 @@ export default defineConfig({
 Create a minimal component to verify everything works:
 
 ```typescript
-import { Component, BaseComponent, State } from 'v-ibe';
+import { Component, BaseComponent, State } from '@v-ibe/core';
 
 @Component()
 class HelloWorld extends BaseComponent {

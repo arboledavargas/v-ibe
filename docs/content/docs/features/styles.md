@@ -8,7 +8,7 @@ v-ibe provides reactive CSS-in-JS through stylesheet classes. Styles are scoped 
 ## Defining a stylesheet
 
 ```typescript
-import { BaseStyleSheet, Rule, Keyframes } from 'v-ibe';
+import { BaseStyleSheet, Rule, Keyframes } from '@v-ibe/core';
 
 class ButtonStyles extends BaseStyleSheet {
   @Rule(':host')

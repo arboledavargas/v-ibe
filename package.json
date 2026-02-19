@@ -1,6 +1,6 @@
 {
-  "name": "v-ibe",
-  "version": "1.0.0",
+  "name": "@v-ibe/core",
+  "version": "0.1.1",
   "description": "A reactive framework for SPAs using signals, class-based web components, and JSX with direct DOM updates",
   "type": "module",
   "main": "./dist/index.js",
@@ -60,14 +60,17 @@
     "typescript"
   ],
   "author": "Julian Vargas <arboledavargas@outlook.com> (https://github.com/arboledavargas)",
+  "homepage": "https://v-ibe.com",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arboledavargas/v-ibe.git"
   },
-  "peerDependencies": {
-    "typescript": ">=5.0.0",
+  "dependencies": {
     "vite": "^7.1.3"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
