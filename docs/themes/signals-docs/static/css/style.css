@@ -119,9 +119,17 @@ ul {
   margin-left: var(--spacing-lg);
 }
 
+ul li {
+  margin-bottom: var(--spacing-xs);
+}
+
 ol {
   list-style-type: decimal;
   margin-left: var(--spacing-lg);
+}
+
+ol li {
+  margin-bottom: var(--spacing-xs);
 }
 
 h1, h2, h3, h4, h5 {
