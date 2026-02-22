@@ -37,7 +37,7 @@ export { registerServiceMetadata, getServiceMetadata, getAllServiceMetadata, cle
 export type { ServiceMetadata } from "./DI/service-metadata";
 export { core } from "./core";
 export { Rule } from "./styles/decorators/rule";
-export type { CSSProperties } from "./styles/decorators/rule";
+export type { CSSProperties } from "./styles/css-properties";
 export { UseStyles } from "./styles/decorators/useStyles";
 // Behaviors system
 export { Behavior, Host, ComponentHost } from "./behaviors";

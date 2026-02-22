@@ -1,5 +1,9 @@
 import { BaseComponent } from "../components/base-component";
 import { HOST_KEY } from "../behaviors/constants";
+import { effect } from "../reactivity/signals/effect";
+import { RULES_KEY, cssObjectToString } from "./decorators/rule";
+import type { RuleDefinition } from "./decorators/rule";
+import type { CSSProperties } from "./css-properties";
 
 /**
  * BaseStyleSheet - Core styling system for the framework
@@ -32,17 +36,53 @@ export class BaseStyleSheet {
   protected documentStyleElement: HTMLStyleElement | null = null;
   protected documentRuleMap: Map<string, { index: number; effect: any }> = new Map();
 
+  // Tracks whether reactive effects for @Rule getters have been activated
+  private _rulesActivated = false;
+
   constructor() {
     this.stylesheet = new CSSStyleSheet();
     this.ruleIndexMap = new Map();
   }
 
   /**
-   * Returns the internal CSSStyleSheet
-   * Used by @UseStyles decorator to attach styles to components
+   * Returns the internal CSSStyleSheet.
+   * If no @Host is used, activates @Rule effects on first call.
+   * If @Host is used, effects are activated by setHost() instead.
    */
   public getStyleSheet(): CSSStyleSheet {
+    this.activateRules();
     return this.stylesheet;
+  }
+
+  /**
+   * Reads @Rule definitions from the constructor and creates reactive effects
+   * for each rule getter. Only runs once per instance.
+   */
+  private activateRules(): void {
+    if (this._rulesActivated) return;
+    this._rulesActivated = true;
+
+    const rules = (this.constructor as any)[RULES_KEY] as RuleDefinition[] | undefined;
+    if (!rules) return;
+
+    for (const { selector, getterName, getter } of rules) {
+      const indexSymbol = Symbol(`css_rule_${selector}_${getterName}`);
+
+      const cleanup = effect(() => {
+        const stylesObject = getter.call(this);
+
+        if (!stylesObject || typeof stylesObject !== 'object') {
+          console.warn(`@Rule('${selector}'): Getter '${getterName}' must return a CSSProperties object`);
+          return;
+        }
+
+        const cssContent = cssObjectToString(stylesObject as CSSProperties);
+        const cssText = `${selector} { ${cssContent}; }`;
+        this.updateSpecificRule(selector, cssText, indexSymbol);
+      });
+
+      this.registerCleanup(cleanup.dispose);
+    }
   }
 
   /**

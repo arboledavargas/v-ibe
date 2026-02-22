@@ -24,8 +24,10 @@ export function UseStyles<StylesClass extends BaseStyleSheet>(
         try {
           // Crear la instancia de la clase de estilos
           const stylesInstance = new StylesConstructor();
-          // Establecer la conexión bidireccional
+          // Configurar el host primero (para que @Host esté disponible)
           stylesInstance.setHost(this);
+          // Activar los @Rule effects (host ya está disponible)
+          stylesInstance.getStyleSheet();
 
           // Asignar la propiedad styles de manera explícita
           Object.defineProperty(this, "styles", {

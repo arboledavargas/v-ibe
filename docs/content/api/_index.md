@@ -9,9 +9,9 @@ Complete reference for all public exports in v-ibe.
 
 ### Components
 
-- `BaseComponent`
-- `Component`
-- `Prop`
+- [`BaseComponent`](/api/base-component/)
+- [`@Component`](/api/component/)
+- [`@Prop`](/api/prop/)
 - `For`
 - `Show`
 

@@ -410,7 +410,10 @@ export class BaseComponent extends HTMLElement {
     if (metadata?.stylesClass) {
       const stylesInstance = new metadata.stylesClass();
 
-      // Obtener el stylesheet
+      // Configurar el host primero (para que @Host esté disponible)
+      stylesInstance.setHost(this);
+
+      // Obtener el stylesheet (activa los @Rule effects)
       const stylesheet = stylesInstance.getStyleSheet();
 
       // Adoptar el stylesheet local (se agregará después de los globales)
@@ -418,9 +421,6 @@ export class BaseComponent extends HTMLElement {
         ...this.shadowRoot.adoptedStyleSheets,
         stylesheet,
       ];
-
-      // Configurar el host para el objeto de estilos
-      stylesInstance.setHost(this);
     }
   }
 
