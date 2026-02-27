@@ -12,15 +12,15 @@ Complete reference for all public exports in v-ibe.
 - [`BaseComponent`](/api/base-component/)
 - [`@Component`](/api/component/)
 - [`@Prop`](/api/prop/)
-- `For`
-- `Show`
+- [`For`](/api/for/)
+- [`Show`](/api/show/)
 
 ### Reactivity
 
-- `State`
-- `Effect`
-- `Computed`
-- `Resource`
+- [`State`](/api/state/)
+- [`effect`](/api/effect/)
+- [`@Computed`](/api/computed/)
+- [`@Resource`](/api/resource/)
 - `Store`
 - `ReactiveArray`
 - `collection`
@@ -103,5 +103,5 @@ Complete reference for all public exports in v-ibe.
 
 ### Reactive Components
 
-- `For`
-- `Show`
+- [`For`](/api/for/)
+- [`Show`](/api/show/)
