@@ -619,12 +619,24 @@ export class BaseComponent extends HTMLElement {
     return instance;
   }
 
+  private static readonly SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+  private static readonly SVG_TAGS = new Set([
+    'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polyline',
+    'polygon', 'text', 'tspan', 'defs', 'use', 'symbol', 'clipPath', 'mask',
+    'filter', 'feGaussianBlur', 'feColorMatrix', 'feBlend', 'feComposite',
+    'feMerge', 'feMergeNode', 'linearGradient', 'radialGradient', 'stop',
+    'image', 'foreignObject', 'switch', 'animate', 'animateTransform',
+    'animateMotion', 'set',
+  ]);
+
   private createNativeElement(
     type: string,
     props: Record<string, any> | null,
     ...children: any[]
   ): HTMLElement {
-    const el = document.createElement(type);
+    const el = BaseComponent.SVG_TAGS.has(type)
+      ? document.createElementNS(BaseComponent.SVG_NAMESPACE, type) as unknown as HTMLElement
+      : document.createElement(type);
 
     // Aplicar propiedades con el BehaviorManager
     if (props) {
