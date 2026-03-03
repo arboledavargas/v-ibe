@@ -4,6 +4,11 @@ title: "v-ibe"
 
 A modern framework for building SPAs with persistent class-based components and fine-grained reactivity. No virtual DOM, no hooks, no re-renders. ~27KB min+gzip.
 
+<div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin:1rem 0;">
+  <a href="https://github.com/arboledavargas/v-ibe" style="border-bottom:none;"><img src="https://img.shields.io/github/stars/arboledavargas/v-ibe?style=flat&logo=github" alt="GitHub stars" style="display:block;" /></a>
+  <a href="https://www.npmjs.com/package/@v-ibe/core" style="border-bottom:none;"><img src="https://img.shields.io/npm/v/@v-ibe/core?style=flat" alt="npm" style="display:block;" /></a>
+</div>
+
 ## Why v-ibe?
 
 Most frameworks treat UI as `UI = f(state)` — a pure function that re-executes on every change. Every state update means re-running components, diffing virtual trees, and reconciling the DOM.

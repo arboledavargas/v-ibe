@@ -5,6 +5,10 @@ layout: "plain"
 
 Everything you need to build with v-ibe, from installation to advanced patterns.
 
+## Installation
+
+- [Installation](/docs/installation/)
+
 ## Core Concepts
 
 - [Components](/docs/components/)

@@ -1,6 +1,6 @@
 {
   "name": "@v-ibe/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A reactive framework for SPAs using signals, class-based web components, and JSX with direct DOM updates",
   "type": "module",
   "main": "./dist/index.js",
@@ -49,7 +49,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "docs": "hugo server --source docs"
   },
   "keywords": [
     "framework",
